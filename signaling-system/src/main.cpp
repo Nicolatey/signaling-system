@@ -3,6 +3,7 @@
 const byte potentio = A0;
 const int redLed = 3;
 const int greenLed = 2;
+const int buzzer = 4;
 
 int potValue = 0;
 int ledBrightness = 0;
@@ -12,6 +13,7 @@ void setup() {
   pinMode(redLed, OUTPUT);
   pinMode(greenLed, OUTPUT);
   pinMode(potentio, INPUT);
+  pinMode(buzzer, OUTPUT);
 }
 
 void loop() {
@@ -29,4 +31,6 @@ void loop() {
 
   ledBrightness = map(potValue, 0, 1023, 0, 255);
   analogWrite(redLed, ledBrightness);
+
+  tone(buzzer, 1000);
 }
