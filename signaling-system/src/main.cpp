@@ -1,22 +1,24 @@
 #include <Arduino.h>
 
-const int buzzer = 3;
-const int redLed = 4; 
-const int greenLed = 5; 
-const int buttonK1 = 8;
-const int buttonK2 = 9;
-// const int microphone = ;
+// const byte potentio = A1;
+const int redLed = 3;
+const int greenLed = 2;
+
 
 void setup() {
   Serial.begin(9600);
-  pinMode(buzzer, OUTPUT);
   pinMode(redLed, OUTPUT);
   pinMode(greenLed, OUTPUT);
-  pinMode(buttonK1, INPUT);
-  pinMode(buttonK2, INPUT);
-  // pinMode(microphone, );
+  // pinMode(potentio, INPUT);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  digitalWrite(redLed, HIGH);
+  delay(200);
+  digitalWrite(redLed, LOW);
+  delay(200);
+  digitalWrite(greenLed, HIGH);
+  delay(200);
+  digitalWrite(greenLed, LOW);
+  delay(200);
 }
