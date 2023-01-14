@@ -1,32 +1,46 @@
 #include <Arduino.h>
 
+// Pin definitions
 const byte potPin = A1;
 const byte micAnalogPin = A0;
-const int micDigitalPin = 7;
-const int redLed = 3;
-const int greenLed = 2;
-const int buzzer = 9;
-const int button = 5;
+const int redLed = 1;
+const int blueLed = 2;
+const int orangeLed = 3;
+const int yellowLed = 4;
+const int greenLed = 5;
+const int whiteButton = 6;
+const int blackButton = 7;
 
-float decibel;
+// Variable definitions
 int percent;
-String userInput;
-int buttonState;
 int potValue = 0;
+int whiteButtonState;
+int blackButtonState;
 float micAnalogValue;
-int micDigitalValue = 0;
 
+// Enum variable
+enum ledOptions {
+  on,
+  off, 
+  blink,
+  lightshow
+};
+
+// Setup
 void setup() {
   Serial.begin(9600);
-  pinMode(micAnalogPin, INPUT);
-  pinMode(micDigitalPin, INPUT);
   pinMode(potPin, INPUT);
+  pinMode(micAnalogPin, INPUT);
   pinMode(redLed, OUTPUT);
+  pinMode(blueLed, OUTPUT);
+  pinMode(orangeLed, OUTPUT);
+  pinMode(yellowLed, OUTPUT);
   pinMode(greenLed, OUTPUT);
-  pinMode(buzzer, OUTPUT);
-  pinMode(button, INPUT_PULLUP);
+  pinMode(whiteButton, INPUT_PULLUP);  
+  pinMode(blackButton, INPUT_PULLUP);
 }
 
+// 
 void redLedBlink() {
   digitalWrite(redLed, HIGH);
   delay(100);
@@ -34,14 +48,74 @@ void redLedBlink() {
   delay(100);
 }
 
+// als userInput als string in een enum als een numerieke waarde wordt vastgelegd en deze 
+// enum als parameter van een functie meegegeven kan worden gebruikt dan is het mogelijk om 
+// een switch case te gebruiken als check functie
+
+void remoteControlPicker(enum ledOptions) {
+  ledOptions filter = ledOptions::on;
+  switch (filter)
+  {
+  case ledOptions::on:
+    digitalWrite(blueLed, HIGH);
+    break;
+  case ledOptions::off:
+    digitalWrite(blueLed, LOW);
+    break;
+  case ledOptions::blink:
+    digitalWrite(blueLed, HIGH);
+    delay(100);
+    digitalWrite(blueLed, LOW);
+    delay(100);
+    break;
+  case ledOptions::lightshow:
+    /* code */
+    break;
+  default:
+    Serial.println("Recieved unknown input");
+    break;
+  }
+  // if (userInput == "aan") {
+  //   digitalWrite(blueLed, HIGH);
+  // }
+  // if (userInput == "uit") {
+  //   digitalWrite(blueLed, LOW);
+  // }
+  // if (userInput == "knipper") {
+  //   digitalWrite(blueLed, HIGH);
+  //   delay(100);
+  //   digitalWrite(blueLed, LOW);
+  //   delay(100);
+  // }
+}
+
 void loop() {
+  // Black button pressed = blue led on
+  if (blackButton == HIGH) {
+    digitalWrite(blueLed, HIGH);
+  } else {
+    digitalWrite(blueLed, LOW);
+  }
+
+// Blue led on = enabled remote control 
+  // while (blueLed == HIGH) {
+  //   if (Serial.available() > 0 ) {
+  //     char recieved = Serial.read();
+  //     if (recieved == '\n') {
+
+  //       userInput = "";
+  //     } else {
+  //       userInput += recieved;
+  //   }
+  // }
+
   // BASICS -----------------------------------------------------
   // micAnalogValue = analogRead(micAnalogPin);
   // micDigitalValue = digitalRead(micDigitalPin);
   // micAnalogValue = micAnalogValue * (100.0 / 1023.0);
-  buttonState = digitalRead(button);
-  potValue = analogRead(potPin);
-  percent = map(potValue, 0, 1023, 0, 100);
+  // blackButtonState = digitalRead(blackButton);
+  // potValue = analogRead(potPin);
+  // percent = map(potValue, 0, 1023, 0, 100);
   // ------------------------------------------------------------
 
   // BUZZER -----------------------------------------------------
@@ -79,28 +153,27 @@ void loop() {
   // ------------------------------------------------------------
 
   // BUTTON -----------------------------------------------------
-  if (buttonState == HIGH) {
-    redLedBlink();
-  } else {
-    digitalWrite(redLed, LOW);
-  }
+  // if (buttonState == HIGH) {
+  //   redLedBlink();
+  // } else {
+  //   digitalWrite(redLed, LOW);
+  // }
   // ------------------------------------------------------------
 
   // SERIAL -----------------------------------------------------
-  if (Serial.available() > 0 ) {
-    char recieved = Serial.read();
-    if (recieved == '\n') {
-      Serial.println("Arduino Received: " + userInput);
-      if (userInput = "aan") {
-        digitalWrite(greenLed, HIGH);
-      } else if (userInput = "uit") {
-        digitalWrite(greenLed, LOW);
-      }
-      userInput = "";
-    } else {
-      userInput += recieved;
-    }
-  }
-
+  // if (Serial.available() > 0 ) {
+  //   char recieved = Serial.read();
+  //   if (recieved == '\n') {
+    //   Serial.println("Arduino Received: " + userInput);
+    //   if (userInput = "aan") {
+    //     digitalWrite(greenLed, HIGH);
+    //   } else if (userInput = "uit") {
+    //     digitalWrite(greenLed, LOW);
+    //   }
+    //   userInput = "";
+    // } else {
+    //   userInput += recieved;
+  //   }
+  // }
   // ------------------------------------------------------------
 }
