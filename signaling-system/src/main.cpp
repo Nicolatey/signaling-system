@@ -14,6 +14,7 @@ const int blackButton = 7;
 // Variable definitions
 int percent;
 int potValue = 0;
+int userInput;
 int whiteButtonState;
 int blackButtonState;
 float micAnalogValue;
@@ -28,7 +29,6 @@ enum ledOptions {
 
 // Setup
 void setup() {
-  Serial.begin(9600);
   pinMode(potPin, INPUT);
   pinMode(micAnalogPin, INPUT);
   pinMode(redLed, OUTPUT);
@@ -38,14 +38,7 @@ void setup() {
   pinMode(greenLed, OUTPUT);
   pinMode(whiteButton, INPUT_PULLUP);  
   pinMode(blackButton, INPUT_PULLUP);
-}
-
-// 
-void redLedBlink() {
-  digitalWrite(redLed, HIGH);
-  delay(100);
-  digitalWrite(redLed, LOW);
-  delay(100);
+  Serial.begin(9600);
 }
 
 // als userInput als string in een enum als een numerieke waarde wordt vastgelegd en deze 
@@ -57,10 +50,10 @@ void remoteControlPicker(enum ledOptions) {
   switch (filter)
   {
   case ledOptions::on:
-    digitalWrite(blueLed, HIGH);
+    return digitalWrite(blueLed, HIGH);
     break;
   case ledOptions::off:
-    digitalWrite(blueLed, LOW);
+    return digitalWrite(blueLed, LOW);
     break;
   case ledOptions::blink:
     digitalWrite(blueLed, HIGH);
@@ -69,10 +62,9 @@ void remoteControlPicker(enum ledOptions) {
     delay(100);
     break;
   case ledOptions::lightshow:
-    /* code */
+    Serial.println("Coming soon!");
     break;
   default:
-    Serial.println("Recieved unknown input");
     break;
   }
   // if (userInput == "aan") {
@@ -91,23 +83,39 @@ void remoteControlPicker(enum ledOptions) {
 
 void loop() {
   // Black button pressed = blue led on
-  if (blackButton == HIGH) {
-    digitalWrite(blueLed, HIGH);
-  } else {
-    digitalWrite(blueLed, LOW);
-  }
+  // if (blackButton == HIGH) {
+  //   digitalWrite(blueLed, HIGH);
+  // } else {
+  //   digitalWrite(blueLed, LOW);
+  // }
 
 // Blue led on = enabled remote control 
-  // while (blueLed == HIGH) {
-  //   if (Serial.available() > 0 ) {
-  //     char recieved = Serial.read();
-  //     if (recieved == '\n') {
 
-  //       userInput = "";
-  //     } else {
-  //       userInput += recieved;
-  //   }
-  // }
+  if (Serial.available() > 0 ) {
+    char received = Serial.read();
+    Serial.println(received);
+    // Keeps adding up characters until the user hits "Enter", then it checks the type of input and executes the remoteControlPicker() function. 
+    if (received == '\n') {
+      Serial.println("Arduino recieved: " + userInput);
+      Serial.println("Hello" == "Hello");
+      if (userInput == 1) {
+        digitalWrite(blueLed, HIGH);
+        remoteControlPicker(on);
+      } else if (userInput == 2) {
+        digitalWrite(blueLed, LOW);
+        // remoteControlPicker(off);
+      } else if (userInput == 3) {
+        remoteControlPicker(blink);
+      } else if (userInput == 4) {
+        remoteControlPicker(lightshow);
+      } else {
+        digitalWrite(blueLed, HIGH);
+      }
+      userInput = 0;
+    } else {
+      userInput += received;
+    }
+  }
 
   // BASICS -----------------------------------------------------
   // micAnalogValue = analogRead(micAnalogPin);
